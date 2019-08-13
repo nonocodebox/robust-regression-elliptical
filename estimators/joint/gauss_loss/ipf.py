@@ -6,7 +6,6 @@ import numpy as np
 class IPFJointEstimator(JointEstimator):
     """
     Inverse covariance estimator using iterative proportional fitting (IPF).
-    TODO: Cite book (ELSII)
     """
     def __init__(self, **kwargs):
         """

@@ -6,7 +6,8 @@ import util
 class ModRegJointEstimator(JointEstimator):
     """
     Implementation of the modified regression algorithm.
-    TODO: Cite book (ELSII)
+    Hastie, T., Tibshirani, R., Friedman, J. (2001). The Elements of Statistical Learning. New York, NY, USA: Springer New York Inc.
+    Algorithm 17.1
     """
 
     def __init__(self, **kwargs):

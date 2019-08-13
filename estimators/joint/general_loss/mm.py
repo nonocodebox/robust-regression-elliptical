@@ -9,7 +9,6 @@ class MMNewtonJointEstimator(JointEstimator):
                  newton_num_steps=750, newton_tol=1e-6, **kwargs):
         """
         Initialize the estimator.
-        :param joint_estimator: The joint estimator to use in each MM step.
         :param loss: The loss to use. Use losses.* package.
         :param max_iters: Maximum number of iterations.
         :param tolerance: The convergence tolerance.
@@ -57,7 +56,7 @@ class MMNewtonJointEstimator(JointEstimator):
         """
         Returns estimated inverse covariance.
         :param X: Data matrix of size (number of features, number of samples)
-        :param E: Prior structure.
+        :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.
         :return: Estimated inverse covariance matrix.
@@ -136,7 +135,7 @@ class MMJointEstimator(JointEstimator):
         """
         Returns estimated inverse covariance.
         :param X: Data matrix of size (number of features, number of samples)
-        :param E: Prior structure.
+        :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.
         :return: Estimated inverse covariance matrix.

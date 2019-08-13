@@ -38,17 +38,17 @@ class NMSEErrorMetricBase(ErrorMetric):
         Y_test = dataset.get_test_set_y(N_index, i)
 
         E = dataset.get_edges(N_index, i)
-        Eyx = dataset.get_edges_yx(N_index, i)
-        Eyy = dataset.get_edges_yy(N_index, i)
+        E_yx = dataset.get_edges_yx(N_index, i)
+        E_yy = dataset.get_edges_yy(N_index, i)
 
-        reg_coef = self._regress(estimator_index, regressor, N_index, N, i, X_train, Y_train, E, Eyx, Eyy)
+        reg_coef = self._regress(estimator_index, regressor, N_index, N, i, X_train, Y_train, E, E_yx, E_yy)
 
         Y_hat = reg_coef @ X_test
 
         error = np.mean(np.linalg.norm(Y_hat - Y_test, axis=0) ** 2) / np.mean(np.linalg.norm(Y_test, axis=0) ** 2)
         return error
 
-    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, Eyx, Eyy):
+    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, E_yx, E_yy):
         raise NotImplementedError('This method must be overridden in a derived class')
 
 
@@ -56,7 +56,7 @@ class JointRegressionNMSEErrorMetric(NMSEErrorMetricBase):
     def __init__(self, T, **kwargs):
         super().__init__(T=T, **kwargs)
 
-    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, Eyx, Eyy):
+    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, E_yx, E_yy):
         reg_coef = regressor.regress_joint(
             np.vstack((X_train, Y_train)), E, self.T)
 
@@ -67,8 +67,8 @@ class ConditionalRegressionNMSEErrorMetric(NMSEErrorMetricBase):
     def __init__(self, T, **kwargs):
         super().__init__(T=T, **kwargs)
 
-    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, Eyx, Eyy):
+    def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, E_yx, E_yy):
         reg_coef = regressor.regress_conditional(
-            X_train, Y_train, Eyx, Eyy, self.T)
+            X_train, Y_train, E_yx, E_yy, self.T)
 
         return reg_coef

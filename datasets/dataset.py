@@ -32,14 +32,14 @@ class ConditionalDataset(Dataset):
         return self.get_dimension_x() + self.get_dimension_y()
 
     def get_edges_yy(self, N_index, iteration):
-        _, Eyx, Eyy = util.split_edges(self.get_edges(N_index, iteration), self.get_dimension_x(), self.get_dimension_y())
+        _, E_yx, E_yy = util.split_edges(self.get_edges(N_index, iteration), self.get_dimension_x(), self.get_dimension_y())
 
-        return Eyy
+        return E_yy
 
     def get_edges_yx(self, N_index, iteration):
-        _, Eyx, Eyy = util.split_edges(self.get_edges(N_index, iteration), self.get_dimension_x(), self.get_dimension_y())
+        _, E_yx, E_yy = util.split_edges(self.get_edges(N_index, iteration), self.get_dimension_x(), self.get_dimension_y())
 
-        return Eyx
+        return E_yx
 
     def get_train_set_x(self, N_index, iteration):
         return self.get_train_set(N_index, iteration)[:self.get_dimension_x(), :]

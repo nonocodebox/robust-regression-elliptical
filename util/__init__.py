@@ -141,17 +141,17 @@ def normalize_data(X):
 
 
 def split_edges(E, dx, dy):
-    Exx, Eyx, Eyy = [], [], []
+    E_xx, E_yx, E_yy = [], [], []
 
     for i, j in E:
         if i < dx and j < dx:
-            Exx.append((i, j))
+            E_xx.append((i, j))
         elif i >= dx and j >= dx:
-            Eyy.append((i - dx, j - dx))
+            E_yy.append((i - dx, j - dx))
         elif i >= dx and j < dx:
-            Eyx.append((i - dx, j))
+            E_yx.append((i - dx, j))
 
-    return Exx, Eyx, Eyy
+    return E_xx, E_yx, E_yy
 
 
 def check_pd(A, lower=True):

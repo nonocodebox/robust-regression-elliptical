@@ -23,6 +23,6 @@ class JointRegressor(JointRegressorBase):
 
     def regress_joint(self, X, E, T):
         K = self.estimator.estimate_joint(X, E, T)
-        Kyy = K[self.dx:, self.dx:]
-        Kyx = K[self.dx:, :self.dx]
-        return -np.linalg.inv(Kyy) @ Kyx
+        K_yy = K[self.dx:, self.dx:]
+        K_yx = K[self.dx:, :self.dx]
+        return -np.linalg.inv(K_yy) @ K_yx

@@ -18,9 +18,9 @@ class DenseConditionalRegressorBase(JointRegressorBase, ConditionalRegressorBase
         if self.dx + self.dy != X.shape[0]:
             raise Exception('Dimension mismatch')
 
-        _, Eyx, Eyy = util.split_edges(E, self.dx, self.dy)
+        _, E_yx, E_yy = util.split_edges(E, self.dx, self.dy)
 
-        return self.regress_conditional(X[:self.dx], X[self.dx:], Eyx, Eyy, T)
+        return self.regress_conditional(X[:self.dx], X[self.dx:], E_yx, E_yy, T)
 
 
 class LinearRegressor(DenseConditionalRegressorBase):
@@ -30,7 +30,7 @@ class LinearRegressor(DenseConditionalRegressorBase):
     def default_name(self):
         return 'Linear'
 
-    def regress_conditional(self, X, Y, Eyx, Eyy, T):
+    def regress_conditional(self, X, Y, E_yx, E_yy, T):
         lr = LinearRegression(fit_intercept=False)
         lr.fit(X.T, Y.T)
 
@@ -44,7 +44,7 @@ class HuberRegressor(DenseConditionalRegressorBase):
     def default_name(self):
         return 'Huber'
 
-    def regress_conditional(self, X, Y, Eyx, Eyy, T):
+    def regress_conditional(self, X, Y, E_yx, E_yy, T):
         dx = X.shape[0]
         dy = Y.shape[0]
         coef = np.zeros((dy, dx))

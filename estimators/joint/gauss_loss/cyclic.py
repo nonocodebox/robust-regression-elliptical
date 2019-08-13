@@ -23,7 +23,7 @@ class SecondCyclicJointEstimator(JointEstimator):
         """
         Returns estimated inverse covariance.
         :param X: Data matrix of size (number of features, number of samples)
-        :param E: Prior structure.
+        :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.
         :return: Estimated inverse covariance matrix.
@@ -183,7 +183,7 @@ class InvestJointEstimator(JointEstimator):
         """
         Returns estimated inverse covariance.
         :param X: Data matrix of size (number of features, number of samples)
-        :param E: Prior structure.
+        :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.
         :return: Estimated inverse covariance matrix.

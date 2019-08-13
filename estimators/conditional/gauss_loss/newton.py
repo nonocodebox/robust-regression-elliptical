@@ -180,6 +180,11 @@ class GCRFoptimizer():
 
 class NewtonConditionalEstimator(ConditionalEstimator):
     def __init__(self, newton_tol=1e-6, newton_num_steps=750, **kwargs):
+        """
+        Initialize the estimator.
+        :param newton_tol: Tolerance for newton convergence.
+        :param newton_num_steps: Maximum number of steps.
+        """
         super().__init__(**kwargs)
         self.newton_tol = newton_tol
         self.newton_num_steps = newton_num_steps
@@ -187,15 +192,30 @@ class NewtonConditionalEstimator(ConditionalEstimator):
     def default_name(self):
         return 'CRF Newton'
 
-    def estimate_conditional(self, X, Y, Eyx, Eyy, T, Kyx_0=None, Kyy_0=None):
+    def estimate_conditional(self, X, Y, E_yx, E_yy, T, K_yx_0=None, K_yy_0=None):
+        """
+        Returns estimated inverse covariance.
+        :param X: Input feature matrix of size (number of features, number of samples)
+        :param Y: Target matrix of size (number of targets, number of samples)
+        :param E_yx: Prior targets-features structure.
+                     List of tuples, where each tuple represents an edge (row, column).
+        :param E_yy: Prior targets structure.
+                     List of tuples, where each tuple represents an edge (row, column).
+        :param T: Maximum number of iterations.
+        :param K_yx_0: Initial value for the estimated K_yx matrix.
+        :param K_yy_0: Initial value for the estimated K_yy matrix.
+        :return: Inverse covariance matrices (K_yx, K_yy)
+                 K_yx is the targets-features inverse covariance matrix.
+                 K_yy is the targets inverse covariance matrix.
+        """
         dx = X.shape[0]
         dy = Y.shape[0]
 
-        opt = GCRFoptimizer(dx, dy, Eyy, Eyx)
-        if Kyx_0 is not None:
-            opt.set_Kyx(Kyx_0)
-        if Kyy_0 is not None:
-            opt.set_Kyy(Kyy_0)
-        Kyy, Kyx, _ = opt.alt_newton_coord_descent(X, Y, max_iter=self.newton_num_steps, convergence_tolerance=self.newton_tol)
+        opt = GCRFoptimizer(dx, dy, E_yy, E_yx)
+        if K_yx_0 is not None:
+            opt.set_Kyx(K_yx_0)
+        if K_yy_0 is not None:
+            opt.set_Kyy(K_yy_0)
+        K_yy, K_yx, _ = opt.alt_newton_coord_descent(X, Y, max_iter=self.newton_num_steps, convergence_tolerance=self.newton_tol)
 
-        return Kyy, Kyx
+        return K_yy, K_yx

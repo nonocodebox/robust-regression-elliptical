@@ -5,6 +5,10 @@ import util
 
 
 class MMNewtonJointEstimator(JointEstimator):
+    """
+    Inverse covariance estimator using Minimization-Majorization with Newton's Algorithm.
+    """
+
     def __init__(self, loss, max_iters=1000, tolerance=1e-6,
                  newton_num_steps=750, newton_tol=1e-6, **kwargs):
         """
@@ -12,8 +16,8 @@ class MMNewtonJointEstimator(JointEstimator):
         :param loss: The loss to use. Use losses.* package.
         :param max_iters: Maximum number of iterations.
         :param tolerance: The convergence tolerance.
-        :param newton_num_steps: The maximum number of steps for each newton run.
-        :param newton_tol: The convergence tolerance for each newton run.
+        :param newton_num_steps: The maximum number of steps for each newton execution.
+        :param newton_tol: The convergence tolerance for each newton execution.
         """
         super().__init__(**kwargs)
 
@@ -55,7 +59,7 @@ class MMNewtonJointEstimator(JointEstimator):
     def estimate_joint(self, X, E, T, K_0=None):
         """
         Returns estimated inverse covariance.
-        :param X: Data matrix of size (number of features, number of samples)
+        :param X: Data matrix of size (number of features, number of samples).
         :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.
@@ -87,6 +91,10 @@ class MMNewtonJointEstimator(JointEstimator):
 
 
 class MMJointEstimator(JointEstimator):
+    """
+    Inverse covariance estimator using Minimization-Majorization.
+    """
+
     def __init__(self, joint_estimator, loss, max_iters=1000, tolerance=1e-6, **kwargs):
         """
         Initialize the estimator.
@@ -134,7 +142,7 @@ class MMJointEstimator(JointEstimator):
     def estimate_joint(self, X, E, T, K_0=None):
         """
         Returns estimated inverse covariance.
-        :param X: Data matrix of size (number of features, number of samples)
+        :param X: Data matrix of size (number of features, number of samples).
         :param E: Prior structure. List of tuples, where each tuple represents an edge (row, column).
         :param T: Maximum number of iterations.
         :param K_0: Initial value for the estimated matrix.

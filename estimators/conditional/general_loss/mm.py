@@ -4,14 +4,18 @@ from ..gauss_loss.newton import GCRFoptimizer
 
 
 class MMNewtonConditionalEstimator(ConditionalEstimator):
+    """
+    Inverse covariance estimator using Minimization-Majorization with Newton's Algorithm.
+    """
+
     def __init__(self, loss, max_iters=1000, tolerance=1e-6, newton_num_steps=750, newton_tol=1e-6, **kwargs):
         """
         Initialize the estimator.
         :param loss: The loss to use. Use losses.* package.
         :param max_iters: Maximum number of iterations.
         :param tolerance: The convergence tolerance.
-        :param newton_num_steps: The maximum number of steps for each newton run.
-        :param newton_tol: The convergence tolerance for each newton run.
+        :param newton_num_steps: The maximum number of steps for each newton execution.
+        :param newton_tol: The convergence tolerance for each newton execution.
         """
         super().__init__(**kwargs)
 
@@ -47,8 +51,8 @@ class MMNewtonConditionalEstimator(ConditionalEstimator):
     def estimate_conditional(self, X, Y, E_yx, E_yy, T, K_yx_0=None, K_yy_0=None):
         """
         Returns estimated inverse covariance.
-        :param X: Input feature matrix of size (number of features, number of samples)
-        :param Y: Target matrix of size (number of targets, number of samples)
+        :param X: Input features matrix of size (number of features, number of samples).
+        :param Y: Targets matrix of size (number of targets, number of samples).
         :param E_yx: Prior targets-features structure.
                      List of tuples, where each tuple represents an edge (row, column).
         :param E_yy: Prior targets structure.
@@ -93,6 +97,10 @@ class MMNewtonConditionalEstimator(ConditionalEstimator):
 
 
 class MMConditionalEstimator(ConditionalEstimator):
+    """
+    Inverse covariance estimator using Minimization-Majorization.
+    """
+
     def __init__(self, conditional_estimator, loss, max_iters=1000, tolerance=1e-6, **kwargs):
         """
         Initialize the estimator.
@@ -134,8 +142,8 @@ class MMConditionalEstimator(ConditionalEstimator):
     def estimate_conditional(self, X, Y, E_yx, E_yy, T, K_yx_0=None, K_yy_0=None):
         """
         Returns estimated inverse covariance.
-        :param X: Input feature matrix of size (number of features, number of samples)
-        :param Y: Target matrix of size (number of targets, number of samples)
+        :param X: Input features matrix of size (number of features, number of samples).
+        :param Y: Targets matrix of size (number of targets, number of samples).
         :param E_yx: Prior targets-features structure.
                      List of tuples, where each tuple represents an edge (row, column).
         :param E_yy: Prior targets structure.

@@ -41,15 +41,32 @@ class Nameable(object):
 
 
 class PlotAdditionalParameters(object):
+    """
+    Class containing additional parameters for assisting plots.
+    """
     def __init__(self, initial_N=None, dataset=None, **kwargs):
+        """
+        Initializes the parameters.
+        :param initial_N: The initial N (sample size) value to use. None if unused.
+        :param dataset: The plot-specific dataset to use. None if unused.
+        """
         super().__init__(**kwargs)
         self._initial_N = initial_N
         self._dataset = dataset
 
     def initial_N(self):
+        """
+        Gets the initial N (sample size) value. May be None if unused.
+        This is the initial sample size out of different sample sizes used as the X axis.
+        :return: The initial N.
+        """
         return self._initial_N
 
     def dataset(self):
+        """
+        Gets the dataset to use specifically for this plot. May be None if unused.
+        :return: The dataset to use.
+        """
         return self._dataset
 
 

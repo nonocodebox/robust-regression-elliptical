@@ -1,1 +1,1 @@
-from .dense import LinearRegressor, HuberRegressor
+from .dense import LinearRegressor, HuberRegressor, LassoHuberRegressor

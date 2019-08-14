@@ -5,6 +5,7 @@ class Dataset(object):
     """
     A dataset object which encapsulates the dataset and dataset information.
     """
+
     def get_dimension(self):
         """
         Returns the total number of features.
@@ -54,9 +55,9 @@ class Dataset(object):
         raise NotImplementedError('Method must be overridden in a derived class')
 
 
-class ConditionalDataset(Dataset):
+class LabeledDataset(Dataset):
     """
-    A dataset object for data in conditional settings.
+    A dataset object for labeled data.
     """
 
     def get_dimension_x(self):

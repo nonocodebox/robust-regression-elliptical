@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 
 def _nanmean(*args, **kwargs):
+    """
+    Wrapper for numpy's nanmean, ignoring any RuntimeWarnings. See numpy.nanmean.
+    """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=RuntimeWarning)
         return np.nanmean(*args, **kwargs)
@@ -19,15 +22,18 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
     :param independent_variable: The name of the independent variable. Defaults to 'N'.
     """
 
+    # Initialize a results array with NaNs
     values = np.full((len(estimators), len(Ns), M), np.nan)
 
     for est_index, estimator in enumerate(estimators):
         for N_index, N in enumerate(Ns):
             for i in range(M):
+                # Progress display
                 progress = 100 * ((est_index * len(Ns) + N_index) * M + i + 1) / (len(estimators) * len(Ns) * M)
                 print('Executing: {}, N={}, round={}/{} ({:.2f}%)'.format(
                     estimator.name(), N, i+1, M, progress), flush=True)
 
+                # Metric calculation
                 v = error_metric.calculate(est_index, estimator, N_index, N, i)
                 context_text = 'Estimator={}, N={}, i={}'.format(estimators[est_index].name, N, i)
 
@@ -35,10 +41,13 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
                     print('({}) Error: Function did not return any value.'.format(context_text))
                     continue
 
+                # Store metric
                 values[est_index, N_index, i] = v
 
+    # Postprocess results
     values = error_metric.postprocess(values)
 
+    # Plot results (mean over iterations)
     plt.figure()
 
     for est_index, estimator in enumerate(estimators):
@@ -54,9 +63,13 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
 
     print('Done plotting')
 
+    # Finally, show the plot if requested
     if show:
         plt.show()
 
 
 def show():
+    """
+    Shows pending plots plotted with show=False.
+    """
     plt.show()

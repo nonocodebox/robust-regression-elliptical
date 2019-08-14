@@ -29,7 +29,7 @@ def main():
     dataset_time = dataset.structured_time()
     dataset_timespace = dataset.structured_timespace()
 
-    loss = losses.tylers_estimator(dataset.get_dimension())
+    loss = losses.tyler(dataset.get_dimension())
 
     TYLER_MAX_ITERS = 12
     TYLER_NEWTON_STEPS = 25

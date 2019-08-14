@@ -11,14 +11,14 @@ import estimators
 import plots
 import losses
 from plots.metrics import ErrorMetric
-from datasets import ConditionalDataset
-from util.data import build_graph_of_inverse_cov
+from datasets import LabeledDataset
+from util.data import generate_inverse_covariance_structure
 
 
 STOCKS_DIR = 'Data/Stocks/'
 
 
-class StocksDataset(ConditionalDataset):
+class StocksDataset(LabeledDataset):
     def __init__(self, Ns, divisions, shuffling, num_observed=275, num_hidden=67, **kwargs):
         super().__init__(**kwargs)
 
@@ -204,8 +204,8 @@ class StocksDataset(ConditionalDataset):
                 X_test = stocks_test[stock_order, :]
 
                 #K_lasso = self._generate_structure_K(X_train)
-                #E = build_graph_of_inverse_cov(K_lasso)
-                E = build_graph_of_inverse_cov(K_structure[stock_order, :][:, stock_order])
+                #E = generate_inverse_covariance_structure(K_lasso)
+                E = generate_inverse_covariance_structure(K_structure[stock_order, :][:, stock_order])
                 self.Es.append(E)
 
                 for i, N in enumerate(self.Ns):
@@ -292,7 +292,7 @@ def main():
     plots.plot_variables_vs_N(
         [
             regressors.joint.JointRegressor(dx, dy, estimators.joint.general_loss.MMNewtonJointEstimator(
-                loss=losses.tylers_estimator(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS,
+                loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS,
                 newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6
             ), name='Tyler'),
             regressors.joint.JointRegressor(dx, dy, estimators.joint.gauss_loss.NewtonJointEstimator(

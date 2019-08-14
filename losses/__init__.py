@@ -40,9 +40,9 @@ gaussian_mle = LossFunction(
 )
 
 
-def _tylers_estimator_func(z, d):
+def _tyler_func(z, d):
     """
-    Tyler's estimator loss function.
+    Tyler's loss function.
     :param z: Point of evaluation.
     :param d: Dimension (number of features).
     :return: Loss value at z.
@@ -50,9 +50,9 @@ def _tylers_estimator_func(z, d):
     return d * np.log(z)
 
 
-def _tylers_estimator_grad(z, d):
+def _tyler_grad(z, d):
     """
-    Tyler's estimator loss gradient.
+    Tyler's loss gradient.
     :param z: Point of evaluation.
     :param d: Dimension (number of features).
     :return: Gradient value at z.
@@ -60,18 +60,15 @@ def _tylers_estimator_grad(z, d):
     return d / z
 
 
-def tylers_estimator(d):
+def tyler(d):
     """
-    Returns a Tyler's estimator loss with dimension d.
+    Returns a Tyler's loss with dimension d.
     :param d: Dimension (number of features).
     :return: Tyler's loss function for dimension d.
     """
-    #g = lambda z: d * np.log(z)
-    #grad = lambda z: d / z
-    #return LossFunction(g, grad)
     return LossFunction(
-        partial(_tylers_estimator_func, d=d),
-        partial(_tylers_estimator_grad, d=d)
+        partial(_tyler_func, d=d),
+        partial(_tyler_grad, d=d)
     )
 
 
@@ -105,9 +102,6 @@ def generalized_gaussian(beta, m):
     :return: Generalized Gaussian loss function for the given parameters.
     """
     #     g = lambda z: (z**params['beta'])/(2*(params['m']**params['beta']))
-    #g = lambda z: (np.float_power(z, beta))
-    #grad = lambda z: (beta * (np.float_power(z, (beta - 1))))
-    #return LossFunction(g, grad)
     return LossFunction(
         partial(_generalized_gaussian_func, beta=beta, m=m),
         partial(_generalized_gaussian_grad, beta=beta, m=m)
@@ -136,14 +130,11 @@ def _multivariate_t_grad(z, d, nu):
 
 def multivariate_t(d, nu):
     """
-    Returns a Multivariate T loss object.
+    Returns a multivariate T loss object.
     :param beta: Shape parameter.
     :param nu: Degrees of freedom.
     :return: Multivariate T loss function for the given nu.
     """
-    #g = lambda z: (nu + d) * np.log(1 + z / nu)
-    #grad = lambda z: ((nu + d) / nu) * (1. / (1 + z / nu))
-    #return LossFunction(g, grad)
     return LossFunction(
         partial(_multivariate_t_func, d=d, nu=nu),
         partial(_multivariate_t_grad, d=d, nu=nu)

@@ -71,9 +71,9 @@ class PlotAdditionalParameters(object):
 
 
 def matmul(*args):
-    '''
+    """
     Multiplies multiple arrays using matrix multiplication.
-    '''
+    """
     if len(args) < 1:
         raise Exception('Need at least one array')
 
@@ -86,34 +86,38 @@ def matmul(*args):
 
 
 def sample_covariance(X):
-    '''
+    """
     Returns the argmax of maximum likelihood of gaussian data.
-    '''
+    :param X: The data matrix, of shape (number of features, number of samples).
+    """
     n = X.shape[1]
     return np.dot(X, X.T) / n
 
 
 def slice_array(rows, cols, M):
-    '''
+    """
     Slices an array given row and column indices.
-    :param rows: Array of row indices
-    :param cols: Array of column indices
-    :return: The sliced array
-    '''
+    :param rows: Array of row indices.
+    :param cols: Array of column indices.
+    :param M: The input array.
+    :return: The sliced array.
+    """
     tiled_rows = np.tile(np.array(rows).reshape(-1,1), (1, len(cols)))
     tiled_cols = np.tile(np.array(cols).reshape(1,-1), (len(rows), 1))
     return M[tiled_rows, tiled_cols]
 
+
 def reorder_array(M, rows, cols=None, inv_indices=True):
-    '''
+    """
     Reorders an array's rows and columns.
+    :param M: The input array.
     :param rows: The row order (indices).
     :param cols: The column order (indices). If None, the row order will be used.
     :param inv_indices: Whether to invert the index direction.
                         If False, each index represents an index in the source array.
                         If True, each index represents an index in the destination array.
     :return: The reordered array.
-    '''
+    """
 
     if cols is None:
         cols = rows
@@ -158,6 +162,16 @@ def normalize_data(X):
 
 
 def split_edges(E, dx, dy):
+    """
+    Splits an array of edges (structure) into multiple arrays.
+    :param E: The input edge array, containing tuples of edge indices (i, j).
+    :param dx: The x-dimension (number of input features).
+    :param dy: The y-dimension (number of targets).
+    :return: (E_xx, E_yx, E_yy) where:
+        E_xx is the features structure
+        E_yx is the targets-features structure
+        E_yy is the targets structure.
+    """
     E_xx, E_yx, E_yy = [], [], []
 
     for i, j in E:

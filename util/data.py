@@ -1,16 +1,18 @@
 import numpy as np
 import sklearn.datasets as datasets
 
-
-'''
+"""
 Generate a PSD covariance matrix of synthetic data with different structures.
-'''
-
+"""
 
 def generate_pd_symmetric_principal_diag(p, clique_size):
-    '''
+    """
     Generate PSD inverse covariance with tree structure (banded).
-    '''
+    :param p: The dimension.
+    :param clique_size: Number of symmetric diagonals. 1 = 1 diagonal, 2 = 3 diagonals, 3 = 5 diagonals etc.
+    :return The PSD array.
+    """
+
     num_cliques = p - clique_size + 1
     D = np.zeros((p,p))
 
@@ -20,17 +22,26 @@ def generate_pd_symmetric_principal_diag(p, clique_size):
         block_mat = np.matmul(block_mat, block_mat.T)
 
         D[i:i+clique_size, i:i+clique_size] += block_mat
+
     return D
 
 
 def generate_random_sparse_psd(p, zero_entry_chance=0.75):
-    '''
-    Generate random sparse PSD.
-    '''
+    """
+    Generate a random sparse PSD array.
+    :param p: The dimension.
+    :param zero_entry_chance: Zero-entry chance.
+    :return: The PSD array.
+    """
     return datasets.make_sparse_spd_matrix(p, alpha=zero_entry_chance)
 
 
-def build_graph_3_daig_tree(p):
+def generate_3_banded_structure(p):
+    """
+    Generates a 3-banded structure.
+    :param p: The dimension.
+    :return: The structure - a list of tuples of edge indices (i, j).
+    """
     E = []
     for i in range(p):
         if i < p-1:
@@ -41,13 +52,18 @@ def build_graph_3_daig_tree(p):
     return E
 
 
-def build_graph_of_inverse_cov(K):
-    EPS = 1e-7
+def generate_inverse_covariance_structure(K, eps=1e-7):
+    """
+    Generates the structure list for a given inverse covariance array.
+    :param K: The inverse covariance structure.
+    :param eps: The tolerance for determining zero entries.
+    :return: The structure - a list of tuples of edge indices (i, j).
+    """
     p = K.shape[0]
     E = []
     for i in range(p):
         for j in range(p):
-            if np.abs(K[i,j]) > EPS:
+            if np.abs(K[i,j]) > eps:
                 E.append((i,j))
     return E
 
@@ -56,7 +72,7 @@ def multivariate_generalized_gaussian(sigma, beta=1, dimension=1, size=1):
     """
     Sample variables from the multivariate generalized gaussian distribution.
     beta=1 gives normal distribution, beta=0.5 gives Laplace distribution.
-    beta->0 coverges to uniform distribution.
+    beta->0 converges to uniform distribution.
     :param sigma: The covariance matrix
     :param beta: The shape parameter
     :param dimension: The dimension

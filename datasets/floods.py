@@ -1,17 +1,23 @@
-from .dataset import ConditionalDataset
+from .dataset import LabeledDataset
 import pickle
 import numpy as np
 import util
 from enum import Enum
 
 
-class FloodsDataset(ConditionalDataset):
+class FloodsDataset(LabeledDataset):
     class Mode(Enum):
-        D_TO_D = 1
-        DP_TO_DP = 2
-        DP_TO_D = 3
+        """
+        Feature mode to use.
+        """
+        D_TO_D = 1  # D_0 -> D_1, D_2, D_3
+        DP_TO_DP = 2  # D_0, P_0 -> D_1, P_1, D_2, P_2, D_3, P_3
+        DP_TO_D = 3  # D_0, P_0 -> D_1, D_2, D_3
 
     class StructureType(Enum):
+        """
+        Strucutre type.
+        """
         TIME = 1
         TIMESPACE = 2
         FULL = 3
@@ -35,9 +41,11 @@ class FloodsDataset(ConditionalDataset):
         P = data['precipitation']
         D = data['discharge']
 
+        # Normalize precipitation
         P -= np.mean(P, axis=1, keepdims=True)
         P /= np.std(P, axis=1, keepdims=True)
 
+        # Normalize discharge
         D -= np.mean(D, axis=1, keepdims=True)
         D /= np.std(D, axis=1, keepdims=True)
 
@@ -49,6 +57,12 @@ class FloodsDataset(ConditionalDataset):
         self.num_samples = num_samples
 
     def _generate_banded(self, n, bands=3):
+        """
+        Generates a banded matrix.
+        :param n: Size of matrix.
+        :param bands: Number of bands.
+        :return: The banded matrix.
+        """
         if bands % 2 == 0:
             raise ValueError('Invalid number of bands')
 
@@ -61,6 +75,10 @@ class FloodsDataset(ConditionalDataset):
         return B
 
     def _build_structure(self):
+        """
+        Builds the various structures.
+        """
+
         # Generate the structure for a single site
         if self.mode == self.Mode.D_TO_D:  # D-DDD
             GT = self._generate_banded(4)
@@ -75,9 +93,9 @@ class FloodsDataset(ConditionalDataset):
 
         GS_chained = self._generate_banded(self.num_sites)
         GS_isolated = np.identity(self.num_sites)
-        E_timespace = util.data.build_graph_of_inverse_cov(np.kron(GT, GS_chained))
-        E_time = util.data.build_graph_of_inverse_cov(np.kron(GT, GS_isolated))
-        E_full = util.data.build_graph_of_inverse_cov(np.ones((self.num_sites * GT.shape[0], self.num_sites * GT.shape[0])))
+        E_timespace = util.data.generate_inverse_covariance_structure(np.kron(GT, GS_chained))
+        E_time = util.data.generate_inverse_covariance_structure(np.kron(GT, GS_isolated))
+        E_full = util.data.generate_inverse_covariance_structure(np.ones((self.num_sites * GT.shape[0], self.num_sites * GT.shape[0])))
 
         self.Es = {
             self.StructureType.TIMESPACE: E_timespace,
@@ -162,7 +180,7 @@ class FloodsDataset(ConditionalDataset):
     def structured_full(self):
         return self.Structured(self, self.Es[self.StructureType.FULL])
 
-    class Structured(ConditionalDataset):
+    class Structured(LabeledDataset):
         def __init__(self, parent, E, **kwargs):
             super().__init__(**kwargs)
 

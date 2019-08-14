@@ -6,7 +6,7 @@ import losses
 from datasets import Dataset
 import argparse
 import statsmodels.sandbox.distributions.multivariate as mdist
-from util.data import build_graph_of_inverse_cov, generate_random_sparse_psd, multivariate_generalized_gaussian
+from util.data import generate_inverse_covariance_structure, generate_random_sparse_psd, multivariate_generalized_gaussian
 from plots.metrics import ErrorMetric
 import scipy as sp
 import util
@@ -102,7 +102,7 @@ class SyntheticDataset(Dataset):
 
         for j in range(self.M):
             K = generate_random_sparse_psd(self.p, 0.6)
-            E = build_graph_of_inverse_cov(K)
+            E = generate_inverse_covariance_structure(K)
 
             self.Ks.append(K)
             self.Es.append(E)
@@ -192,12 +192,12 @@ def main():
 
         estimator_objects = [
             estimators.joint.general_loss.MMNewtonJointEstimator(
-               loss=losses.tylers_estimator(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS,
+               loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS,
                newton_tol=1e-6, name='Tyler'),
             # estimators.joint.gauss_loss.NewtonJointEstimator(
             #     newton_num_steps=GAUSSIAN_NEWTON_STEPS, newton_tol=1e-6, name='GMRF Newton'),
             # estimators.joint.general_loss.MMJointEstimator(
-            #     estimators.joint.gauss_loss.InvestJointEstimator(), loss=losses.tylers_estimator(dataset.get_dimension()),
+            #     estimators.joint.gauss_loss.InvestJointEstimator(), loss=losses.tyler(dataset.get_dimension()),
             #     tolerance=1e-6, max_iters=TYLER_MAX_ITERS, name='Tyler'),
             estimators.joint.gauss_loss.InvestJointEstimator(name='GMRF')
         ]

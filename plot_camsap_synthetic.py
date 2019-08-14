@@ -3,10 +3,10 @@ import plots
 import regressors
 import estimators
 import losses
-from datasets import ConditionalDataset
+from datasets import LabeledDataset
 import argparse
 import statsmodels.sandbox.distributions.multivariate as mdist
-from util.data import build_graph_of_inverse_cov, generate_random_sparse_psd
+from util.data import generate_inverse_covariance_structure, generate_random_sparse_psd
 
 
 T_DIST_NU = 2.5
@@ -17,7 +17,7 @@ NUM_SAMPLES_DEFAULT = [20, 21, 22,23, 24, 25, 26, 27, 30, 33, 36, 39, 42, 45, 50
               80, 90, 100, 110, 120, 130, 140, 150, 170, 200, 250, 350, 500]
 
 
-class SyntheticDataset(ConditionalDataset):
+class SyntheticDataset(LabeledDataset):
     def __init__(self, dx, dy, Ns, M, dist='normal', **kwargs):
         super().__init__(**kwargs)
 
@@ -33,7 +33,7 @@ class SyntheticDataset(ConditionalDataset):
         self.K_star = K_star
         self.Q_star = np.linalg.pinv(self.K_star)
 
-        self.E = build_graph_of_inverse_cov(self.K_star)
+        self.E = generate_inverse_covariance_structure(self.K_star)
         #self.not_E = [(i, j) for i in range(self.p) for j in range(self.p) if (i, j) not in self.E]
 
         self.data = [[{'train': None, 'test': None} for _ in range(M)] for _ in Ns]
@@ -112,7 +112,7 @@ def main():
         regressors.common.HuberRegressor(name='Huber'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.gauss_loss.NewtonConditionalEstimator(newton_tol=1e-6), name='GCRF'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
-            loss=losses.tylers_estimator(dy), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-Tyler'),
+            loss=losses.tyler(dy), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-Tyler'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
             loss=losses.multivariate_t(dy, T_DIST_NU), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-T-distribution')
     ]

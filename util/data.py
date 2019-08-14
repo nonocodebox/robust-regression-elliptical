@@ -1,9 +1,6 @@
 import numpy as np
 import sklearn.datasets as datasets
 
-"""
-Generate a PSD covariance matrix of synthetic data with different structures.
-"""
 
 def generate_pd_symmetric_principal_diag(p, clique_size):
     """
@@ -76,7 +73,7 @@ def multivariate_generalized_gaussian(sigma, beta=1, dimension=1, size=1):
     :param sigma: The covariance matrix
     :param beta: The shape parameter
     :param dimension: The dimension
-    :param size: The number of sampels to generate
+    :param size: The number of samples to generate
     :return: The sampled values
     """
 

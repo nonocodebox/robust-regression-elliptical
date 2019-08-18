@@ -157,6 +157,8 @@ class FloodsDataset(LabeledDataset):
         indices = np.random.permutation(self.num_samples)
 
         N = self.Ns[N_index]
+
+        # Return first N samples
         return self.DD[:, indices[:N]]
 
     def get_test_set(self, N_index, iteration):
@@ -164,9 +166,11 @@ class FloodsDataset(LabeledDataset):
         indices = np.random.permutation(self.num_samples)
 
         if self.test_size == 0:
+            # Use all of the remaining samples as the test set
             N = self.Ns[N_index]
             test_indices = indices[N:]
         else:
+            # Constant test size, use last test_size samples
             test_indices = indices[-self.test_size:]
 
         return self.DD[:, test_indices]

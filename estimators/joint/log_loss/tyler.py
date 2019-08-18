@@ -34,8 +34,7 @@ class TylerJointEstimator(JointEstimator):
         else:
             # Initialize with PD matrix.
             Q = np.eye(p)
-            # Q = np.random.randn(p, N)
-            # Q = util.sample_covariance(Q)
+            #Q = util.sample_covariance(X)
 
         prevQ = Q
 

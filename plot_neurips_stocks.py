@@ -270,6 +270,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--divisions', type=int, default=75)
     parser.add_argument('-s', '--shuffling', type=int, default=100)
+    parser.add_argument('-N', '--num-samples', type=int, default=list(range(200, 801, 50)) + [900], nargs='+')
     args = parser.parse_args()
 
     #Ns = list(range(200, 801, 50)) + [900]

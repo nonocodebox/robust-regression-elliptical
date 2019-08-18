@@ -49,10 +49,10 @@ Custom:
 #### Stocks
 
 With default parameters:
-`python plot_neurips_stocls.py`
+`python plot_neurips_stocks.py`
 
 Custom:
-`python plot_neurips_stocls.py -N 100 200 300 -d 75 -s 10`
+`python plot_neurips_stocks.py -N 100 200 300 -d 75 -s 10`
 
 ## Code examples
 
@@ -61,7 +61,7 @@ Custom:
 #### Creating an estimator
 
 To create an estimator, create an instance of any of the classes in `estimators.joint` or `estimators.conditional`.
-For example:
+For example, to create an MM newton joint estimator with Tyler loss of dimension 10:
 
 ```python
 import estimators

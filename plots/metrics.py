@@ -1,5 +1,6 @@
 from util import Nameable
 import numpy as np
+import pickle
 
 
 class ErrorMetric(Nameable):
@@ -36,16 +37,18 @@ class NMSEErrorMetricBase(ErrorMetric):
     Base class for NMSE metric implementations.
     """
 
-    def __init__(self, T, dataset=None, **kwargs):
+    def __init__(self, T, dataset=None, output_path=None, **kwargs):
         """
         Initialize this metric calculator.
         :param T: The number of averaging iterations.
         :param dataset: The dataset to use. Can be None if the datasets are specified via each
                         estimators's dataset property.
+        :param output_path: File path for saving raw results as pickle, or None if unused.
         """
         super().__init__(**kwargs)
 
         self.dataset = dataset
+        self.output_path = output_path
         self.T = T
 
     def default_name(self):
@@ -82,6 +85,13 @@ class NMSEErrorMetricBase(ErrorMetric):
         # Calculate NMSE
         error = np.mean(np.linalg.norm(Y_hat - Y_test, axis=0) ** 2) / np.mean(np.linalg.norm(Y_test, axis=0) ** 2)
         return error
+
+    def postprocess(self, values):
+        if self.output_path:
+           with open(self.output_path, 'wb') as f:
+               pickle.dump(values, f)
+        
+        return values
 
     def _regress(self, estimator_index, regressor, N_index, N, i, X_train, Y_train, E, E_yx, E_yy):
         """

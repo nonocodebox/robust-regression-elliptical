@@ -13,7 +13,7 @@ T_DIST_NU = 2.5
 DIMENSION_X_DEFAULT = 3
 DIMENSION_Y_DEFAULT = 7
 AVERAGE_ITERATIONS_DEFAULT = 100
-NUM_SAMPLES_DEFAULT = [20, 21, 22,23, 24, 25, 26, 27, 30, 33, 36, 39, 42, 45, 50, 70,
+NUM_SAMPLES_DEFAULT = [20, 21, 22, 23, 24, 25, 26, 27, 30, 33, 36, 39, 42, 45, 50, 70,
               80, 90, 100, 110, 120, 130, 140, 150, 170, 200, 250, 350, 500]
 
 
@@ -34,7 +34,6 @@ class SyntheticDataset(LabeledDataset):
         self.Q_star = np.linalg.pinv(self.K_star)
 
         self.E = generate_inverse_covariance_structure(self.K_star)
-        #self.not_E = [(i, j) for i in range(self.p) for j in range(self.p) if (i, j) not in self.E]
 
         self.data = [[{'train': None, 'test': None} for _ in range(M)] for _ in Ns]
 
@@ -94,19 +93,13 @@ def main():
 
     dx = args.dimension_x
     dy = args.dimension_y
-
-    #Ns = [20, 21, 22,23, 24, 25, 26, 27, 30, 33, 36, 39, 42, 45, 50, 70,
-    #      80, 90, 100, 110, 120, 130, 140, 150, 170, 200, 250, 350, 500]
-    #Ns = [20, 30, 40, 100, 200]
     Ns = args.num_samples
-
     M = args.average_iterations
     T = 200
-
     dist = args.distribution
 
     dataset = SyntheticDataset(dx=dx, dy=dy, Ns=Ns, M=M, dist=dist)
-    metric = plots.ConditionalRegressionNMSEErrorMetric(T=T, dataset=dataset)
+    metric = plots.ConditionalRegressionNMSEErrorMetric(T=T, dataset=dataset, output_path='results-camsap-synthetic.pickle')
 
     estimator_objects = [
         regressors.common.HuberRegressor(name='Huber'),

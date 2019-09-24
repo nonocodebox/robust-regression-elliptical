@@ -9,6 +9,9 @@ import argparse
 NUM_SAMPLES_DEFAULT = [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]
 AVERAGE_ITERATIONS_DEFAULT = 10
 
+TYLER_MAX_ITERS = 12
+TYLER_NEWTON_STEPS = 25
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,10 +22,6 @@ def main():
     T = 20
     M = args.average_iterations
     Ns = args.num_samples
-    #Ns = [300, 400, 500, 600, 800, 1000]
-
-    TYLER_MAX_ITERS = 12
-    TYLER_NEWTON_STEPS = 25
 
     dataset = FloodsDataset(Ns=Ns, M=10, test_size=200, mode=FloodsDataset.Mode.DP_TO_D)
     dataset = dataset.structured_full()
@@ -45,7 +44,7 @@ def main():
         ],
         dataset.get_Ns(),
         dataset.get_averaging(),
-        plots.metrics.ConditionalRegressionNMSEErrorMetric(T, dataset=dataset),
+        plots.metrics.ConditionalRegressionNMSEErrorMetric(T, dataset=dataset, output_path='results-camsap-floods-dense.pickle'),
         independent_variable='Training set size'
     )
 

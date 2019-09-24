@@ -9,6 +9,10 @@ import argparse
 NUM_SAMPLES_DEFAULT = [20, 30, 40, 50, 75, 100, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500]
 AVERAGE_ITERATIONS_DEFAULT = 10
 
+TYLER_MAX_ITERS = 12
+TYLER_NEWTON_STEPS = 25
+GAUSSIAN_NEWTON_STEPS = 200
+
 
 def main():
     T = 20
@@ -20,17 +24,12 @@ def main():
 
     M = args.average_iterations
     Ns = args.num_samples
-    #Ns = [60, 100]
 
     dataset = FloodsDataset(Ns=Ns, M=M, test_size=200, mode=FloodsDataset.Mode.DP_TO_D)
     dataset_full = dataset.structured_full()
     dataset_timespace = dataset.structured_timespace()
 
     loss = losses.tyler(dataset.get_dimension_y())
-
-    TYLER_MAX_ITERS = 12
-    TYLER_NEWTON_STEPS = 25
-    GAUSSIAN_NEWTON_STEPS = 200
 
     plots.plot_variables_vs_N(
         [
@@ -47,7 +46,7 @@ def main():
         ],
         dataset.get_Ns(),
         dataset.get_averaging(),
-        plots.metrics.ConditionalRegressionNMSEErrorMetric(T),
+        plots.metrics.ConditionalRegressionNMSEErrorMetric(T, output_path='results-camsap-floods-structured.pickle'),
         independent_variable='Training set size'
     )
 

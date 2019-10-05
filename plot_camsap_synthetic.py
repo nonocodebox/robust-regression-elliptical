@@ -102,7 +102,7 @@ def main():
     metric = plots.ConditionalRegressionNMSEErrorMetric(T=T, dataset=dataset, output_path='results-camsap-synthetic.pickle')
 
     estimator_objects = [
-        regressors.common.HuberRegressor(name='Huber'),
+        regressors.common.HuberRegressor(name='ROMER-Huber'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.gauss_loss.NewtonConditionalEstimator(newton_tol=1e-6), name='GCRF'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
             loss=losses.tyler(dy), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-Tyler'),

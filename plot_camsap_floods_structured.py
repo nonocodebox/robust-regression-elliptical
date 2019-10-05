@@ -35,14 +35,14 @@ def main():
         [
             regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
                 loss=loss, tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6
-            ), name='ROMER-Tyler time-space', dataset=dataset_timespace, initial_N=60),
+            ), name='ROMER-Tyler (time-space)', dataset=dataset_timespace, initial_N=20),
             regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
                 loss=loss, tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6
             ), name='ROMER-Tyler', dataset=dataset_full, initial_N=100),
             regressors.conditional.ConditionalRegressor(estimators.conditional.gauss_loss.NewtonConditionalEstimator(
                 newton_num_steps=GAUSSIAN_NEWTON_STEPS, newton_tol=1e-6
-            ), name='Gauss time-space', dataset=dataset_timespace, initial_N=60),
-            regressors.common.LinearRegressor(name='Gauss', dataset=dataset_full, initial_N=175)
+            ), name='GCRF (time-space)', dataset=dataset_timespace, initial_N=20),
+            regressors.common.LinearRegressor(name='GCRF', dataset=dataset_full, initial_N=125)
         ],
         dataset.get_Ns(),
         dataset.get_averaging(),

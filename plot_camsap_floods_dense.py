@@ -28,7 +28,7 @@ def main():
 
     plots.plot_variables_vs_N(
         [
-            regressors.common.LinearRegressor(name='Linear'),
+            regressors.common.LinearRegressor(name='Linear Regression'),
             regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
                 loss=losses.tyler(dataset.get_dimension_y()),
                 tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6

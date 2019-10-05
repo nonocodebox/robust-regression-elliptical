@@ -107,6 +107,43 @@ def generalized_gaussian(beta, m):
         partial(_generalized_gaussian_grad, beta=beta, m=m)
     )
 
+def _generalized_gaussian_d_func(z, beta, m, d):
+    """
+    Generalized Gaussian loss function.
+    :param z: Point of evaluation.
+    :param beta: Shape parameter.
+    :param m: Scaling of scatter matrix.
+    :return: Loss value at z.
+    """
+    #return np.float_power(z, beta) * np.float_power(d, 1 - beta)
+    return np.float_power(z, beta) / (d ** (beta - 1))
+
+
+def _generalized_gaussian_d_grad(z, beta, m, d):
+    """
+    Generalized Gaussian loss gradient.
+    :param z: Point of evaluation.
+    :param beta: Shape parameter.
+    :param m: Scaling of scatter matrix.
+    :return: Gradient value at z.
+    """
+    #return beta * (np.float_power(z, (beta - 1))) * np.float_power(d, 1 - beta)
+    return beta * (np.float_power(z, (beta - 1))) / (d ** (beta - 1))
+
+
+def generalized_gaussian_d(beta, m, d):
+    """
+    Returns a Generalized Gaussian loss object.
+    :param beta: Shape parameter.
+    :param m: Scaling of scatter matrix.
+    :return: Generalized Gaussian loss function for the given parameters.
+    """
+    #     g = lambda z: (z**params['beta'])/(2*(params['m']**params['beta']))
+    return LossFunction(
+        partial(_generalized_gaussian_d_func, beta=beta, m=m, d=d),
+        partial(_generalized_gaussian_d_grad, beta=beta, m=m, d=d)
+    )
+
 
 def _multivariate_t_func(z, d, nu):
     """

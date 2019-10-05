@@ -23,7 +23,7 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
     """
 
     # Initialize a results array with NaNs
-    values = np.full((len(estimators), len(Ns), M), np.nan)
+    values = np.full((len(estimators), len(Ns), M, error_metric.metric_count()), np.nan)
 
     for est_index, estimator in enumerate(estimators):
         for N_index, N in enumerate(Ns):
@@ -41,25 +41,30 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
                     print('({}) Error: Function did not return any value.'.format(context_text))
                     continue
 
+                if len(v) < error_metric.metric_count():
+                    print('({}) Error: Function did not return enough values.'.format(context_text))
+                    continue
+
                 # Store metric
-                values[est_index, N_index, i] = v
+                values[est_index, N_index, i, :] = v
 
     # Postprocess results
     values = error_metric.postprocess(values)
 
-    # Plot results (mean over iterations)
-    plt.figure()
+    for m in range(error_metric.metric_count()):
+        # Plot results (mean over iterations)
+        plt.figure()
 
-    for est_index, estimator in enumerate(estimators):
-        avg = _nanmean(values[est_index, :, :], axis=1)
-        plt.plot(Ns, avg, label=estimator.name())
+        for est_index, estimator in enumerate(estimators):
+            avg = _nanmean(values[est_index, :, :, m], axis=1)
+            plt.plot(Ns, avg, label=estimator.name())
 
-    variable_name = error_metric.name()
+        variable_name = error_metric.metric_name(m)
 
-    plt.title('{} vs. {}'.format(variable_name, independent_variable))
-    plt.xlabel(independent_variable)
-    plt.ylabel(variable_name)
-    plt.legend()
+        plt.title('{} vs. {}'.format(variable_name, independent_variable))
+        plt.xlabel(independent_variable)
+        plt.ylabel(variable_name)
+        plt.legend()
 
     print('Done plotting')
 

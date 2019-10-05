@@ -26,10 +26,25 @@ class ErrorMetric(Nameable):
     def postprocess(self, values):
         """
         Post-processes the calculated data after all results are received.
-        :param values: The results array, of size (estimators x samples sizes x averaging iterations).
+        :param values: The results array, of size (estimators x samples sizes x averaging iterations x number of metrics).
         :return: The postprocessed results array.
         """
         return values
+
+    def metric_count(self):
+        """
+        Returns the number of scalar metrics returned by this instance.
+        :return: The number of metrics used.
+        """
+        return 1
+
+    def metric_name(self, index):
+        """
+        Returns the metric name for a specific scalar.
+        :param index: The metric index.
+        :return: The metric name.
+        """
+        return self.name()
 
 
 class NMSEErrorMetricBase(ErrorMetric):

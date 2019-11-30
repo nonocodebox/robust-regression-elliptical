@@ -41,6 +41,9 @@ def plot_variables_vs_N(estimators, Ns, M, error_metric, independent_variable='N
                     print('({}) Error: Function did not return any value.'.format(context_text))
                     continue
 
+                if not isinstance(v, (tuple, list)):
+                    v = (v,)
+
                 if len(v) < error_metric.metric_count():
                     print('({}) Error: Function did not return enough values.'.format(context_text))
                     continue

@@ -110,9 +110,13 @@ class SyntheticDataset(Dataset):
 
             for i, N in enumerate(self.Ns):
                 self.data[i][j] = self.X[j][:, :N]
+                #print(np.linalg.norm(K - np.linalg.pinv(util.sample_covariance(self.data[i][j])), 'fro'))
+
+        #exit()
 
     def _sample(self, K, N):
         #return multivariate_generalized_gaussian(K, self.beta, self.p, N)
+        #return get_elliptic_data(PositiveScalarSamplerFactory().multivariate_t({'dim': self.p, 'nu': 2}), self.p, N, K)
         return get_elliptic_data(PositiveScalarSamplerFactory().generalized_gaussian({'dim': self.p, 'shape': self.beta}), self.p, N, K)
 
     def get_dimension(self):
@@ -191,15 +195,19 @@ def main():
         metric = JointEstimationDistanceErrorMetric(T=T, dataset=dataset)
 
         estimator_objects = [
-            estimators.joint.general_loss.MMNewtonJointEstimator(
-               loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS,
-               newton_tol=1e-6, name='Tyler'),
+            #estimators.joint.general_loss.MMNewtonJointEstimator(
+            #   loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS,
+            #   newton_tol=1e-6, name='Tyler'),
             # estimators.joint.gauss_loss.NewtonJointEstimator(
             #     newton_num_steps=GAUSSIAN_NEWTON_STEPS, newton_tol=1e-6, name='GMRF Newton'),
             # estimators.joint.general_loss.MMJointEstimator(
             #     estimators.joint.gauss_loss.InvestJointEstimator(), loss=losses.tyler(dataset.get_dimension()),
             #     tolerance=1e-6, max_iters=TYLER_MAX_ITERS, name='Tyler'),
-            estimators.joint.gauss_loss.InvestJointEstimator(name='GMRF')
+            #estimators.joint.gauss_loss.InvestJointEstimator(name='GMRF'),
+            estimators.joint.general_loss.MMNewtonJointEstimator(
+               loss=losses.generalized_gaussian(beta, 1), tolerance=1e-6, max_iters=TYLER_MAX_ITERS, newton_num_steps=TYLER_NEWTON_STEPS,
+               newton_tol=1e-6, name='GG'),
+            estimators.joint.gauss_loss.SampleCovarianceJointEstimator(name='Sample covariance')
         ]
 
         plots.plot_variables_vs_N(estimator_objects, Ns, M, metric, show=False)

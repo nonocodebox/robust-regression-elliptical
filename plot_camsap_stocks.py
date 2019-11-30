@@ -320,10 +320,10 @@ def main():
                 newton_num_steps=GAUSSIAN_NEWTON_STEPS, newton_tol=1e-6
             ), name='Laplace'),
 
-            regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
-                loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS,
-                newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6
-            ), name = 'Tyler conditional'),
+            # regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
+            #     loss=losses.tyler(dataset.get_dimension()), tolerance=1e-6, max_iters=TYLER_MAX_ITERS,
+            #     newton_num_steps=TYLER_NEWTON_STEPS, newton_tol=1e-6
+            # ), name = 'Tyler conditional'),
             regressors.conditional.ConditionalRegressor(estimators.conditional.gauss_loss.NewtonConditionalEstimator(
                 newton_num_steps=GAUSSIAN_NEWTON_STEPS, newton_tol=1e-6
             ), name='GCRF'),

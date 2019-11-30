@@ -7,6 +7,8 @@ from datasets import LabeledDataset
 import argparse
 import statsmodels.sandbox.distributions.multivariate as mdist
 from util.data import generate_inverse_covariance_structure, generate_random_sparse_psd
+import scipy as sp
+import util
 
 
 T_DIST_NU = 2.5
@@ -18,7 +20,7 @@ NUM_SAMPLES_DEFAULT = [20, 21, 22, 23, 24, 25, 26, 27, 30, 33, 36, 39, 42, 45, 5
 
 
 class SyntheticDataset(LabeledDataset):
-    def __init__(self, dx, dy, Ns, M, dist='normal', **kwargs):
+    def __init__(self, dx, dy, Ns, M, dist='normal', seed=1, **kwargs):
         super().__init__(**kwargs)
 
         self.dx = dx
@@ -27,7 +29,9 @@ class SyntheticDataset(LabeledDataset):
         self.M = M
         self.dist = dist
         self.N_test = 500
+        self.seed = 1
 
+        np.random.seed(seed)
         K_star = generate_random_sparse_psd(dx + dy, 0.6)
 
         self.K_star = K_star
@@ -45,6 +49,8 @@ class SyntheticDataset(LabeledDataset):
         self.X_test = []
 
         for j in range(self.M):
+            np.random.seed(self.seed + j)
+
             self.X.append(self._sample(max_N))
             self.X_test.append(self._sample(self.N_test))
 
@@ -89,6 +95,7 @@ def main():
     parser.add_argument('-y', '--dimension-y', type=int, default=DIMENSION_Y_DEFAULT)
     parser.add_argument('-N', '--num-samples', type=int, default=NUM_SAMPLES_DEFAULT, nargs='+')
     parser.add_argument('-M', '--average-iterations', type=int, default=AVERAGE_ITERATIONS_DEFAULT)
+    parser.add_argument('-s', '--seed', type=int, default=1)
     args = parser.parse_args()
 
     dx = args.dimension_x
@@ -98,14 +105,16 @@ def main():
     T = 200
     dist = args.distribution
 
-    dataset = SyntheticDataset(dx=dx, dy=dy, Ns=Ns, M=M, dist=dist)
+    dataset = SyntheticDataset(dx=dx, dy=dy, Ns=Ns, M=M, dist=dist, seed=args.seed)
     metric = plots.ConditionalRegressionNMSEErrorMetric(T=T, dataset=dataset, output_path='results-camsap-synthetic.pickle')
 
     estimator_objects = [
         regressors.common.HuberRegressor(name='ROMER-Huber'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.gauss_loss.NewtonConditionalEstimator(newton_tol=1e-6), name='GCRF'),
+        #regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
+        #    loss=losses.tyler(dy), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-Tyler'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
-            loss=losses.tyler(dy), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-Tyler'),
+            loss=losses.generalized_gaussian(0.5, 1), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-GG beta=0.5'),
         regressors.conditional.ConditionalRegressor(estimators.conditional.general_loss.MMNewtonConditionalEstimator(
             loss=losses.multivariate_t(dy, T_DIST_NU), tolerance=1e-6, max_iters=25, newton_tol=1e-6), name='ROMER-T-distribution')
     ]
